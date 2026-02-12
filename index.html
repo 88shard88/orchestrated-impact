@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>track 07 - Onion Steak / Battle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0; background:#ffffff; color:white; font-family:Arial, sans-serif; text-align:center;">
+
+<!-- Left Arrow -->
+<div id="leftArrow" onclick="prevTrack()" 
+style="position:fixed; left:20px; top:50%; transform:translateY(-50%); 
+color:white; font-size:24px; cursor:pointer; display:none;">
+←
+</div>
+
+<!-- Right Arrow -->
+<div id="rightArrow" onclick="nextTrack()" 
+style="position:fixed; right:20px; top:50%; transform:translateY(-50%); 
+color:white; font-size:24px; cursor:pointer;">
+→
+</div>
+
+<!-- Title -->
+<div id="title" style="margin-top:40px; font-size:28px;">
+<span style="color:white;">track 07 - </span>
+<span>Onion Steak / Battle</span>
+</div>
+
+<!-- Audio -->
+<div style="margin-top:30px;">
+<audio id="audioPlayer" controls>
+<source src="track.mp3" type="audio/mpeg">
+</audio>
+</div>
+
+<!-- Duration -->
+<div id="duration" style="margin-top:10px; font-size:14px;">
+2:18
+</div>
+
+<script>
+
+let currentTrack = 0;
+
+const tracks = [
+{
+titleHTML: '<span style="color:white;">track 07 - </span><span>Onion Steak / Battle</span>',
+file: "track.mp3",
+duration: "2:18",
+pageTitle: "track 07 - Onion Steak / Battle"
+},
+{
+titleHTML: '<span style="color:white;">track 12 - </span><span style="color:#FFFF00;">Posthaste</span>',
+file: "pretrack2.mp3",
+duration: "2:02",
+pageTitle: "track 12 - Posthaste"
+},
+{
+titleHTML: '<span style="color:white;">track 15 - </span><span style="color:#FF0000;">Orchestrated Impact</span>',
+file: "track2.mp3",
+duration: "3:05",
+pageTitle: "track 15 - Orchestrated Impact"
+}
+];
+
+function updateTrack() {
+
+document.getElementById("title").innerHTML = tracks[currentTrack].titleHTML;
+document.getElementById("duration").innerText = tracks[currentTrack].duration;
+document.title = tracks[currentTrack].pageTitle;
+
+let audio = document.getElementById("audioPlayer");
+audio.pause();
+audio.src = tracks[currentTrack].file;
+audio.load();
+
+document.getElementById("leftArrow").style.display = currentTrack === 0 ? "none" : "block";
+document.getElementById("rightArrow").style.display = currentTrack === tracks.length - 1 ? "none" : "block";
+}
+
+function nextTrack() {
+if (currentTrack < tracks.length - 1) {
+currentTrack++;
+updateTrack();
+}
+}
+
+function prevTrack() {
+if (currentTrack > 0) {
+currentTrack--;
+updateTrack();
+}
+}
+
+</script>
+
+</body>
+</html>
