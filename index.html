@@ -3,119 +3,263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Music Tracks</title>
+<title>track 15 – Orchestrated Impact</title>
 
 <style>
-body {
-    margin: 0;
-    background-color: #ffffff;
-    color: white;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
+body{
+    margin:0;
+    background:#ffffff;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
-.track {
-    display: none;
-    height: 100vh;
-    width: 100vw;
-    position: relative;
-    text-align: center;
+/* ---------- TOP BAR ---------- */
+
+.topbar{
+    background:black;
+    color:white;
+    padding:22px 40px;
+    font-style:italic;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:28px;
 }
 
-.active {
-    display: block;
+.topbar .right{
+    font-size:20px;
 }
 
-.top-text {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    font-size: 24px;
+.track-red{
+    color:#FF0000;
 }
 
-.audio-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+/* ---------- CENTER ---------- */
+
+.center{
+    text-align:center;
+    padding-top:60px;
 }
 
-.arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 40px;
-    cursor: pointer;
-    user-select: none;
+.center img{
+    width:520px;
+    max-width:80%;
 }
 
-.left {
-    left: 20px;
+/* ---------- PLAYER ---------- */
+
+.player{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:black;
+    color:white;
+    padding:22px 60px 28px 60px;
+    box-sizing:border-box;
 }
 
-.right {
-    right: 20px;
+.progress-row{
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.time{
+    width:60px;
+    font-size:22px;
+}
+
+.progress{
+    flex:1;
+    height:4px;
+    background:#444;
+    position:relative;
+    cursor:pointer;
+}
+
+.progress-fill{
+    position:absolute;
+    height:100%;
+    width:0%;
+    background:white;
+}
+
+.handle{
+    position:absolute;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:16px;
+    height:16px;
+    background:white;
+    border-radius:50%;
+    left:0%;
+}
+
+.controls{
+    margin-top:25px;
+    text-align:center;
+}
+
+.controls button{
+    background:none;
+    border:none;
+    cursor:pointer;
+    margin:0 40px;
+    padding:0;
+}
+
+.controls svg{
+    fill:white;
+    width:36px;
+    height:36px;
+}
+
+.loop-inactive svg{
+    opacity:0.4;
+}
+
+.loop-active svg{
+    opacity:1;
 }
 </style>
 </head>
-
 <body>
 
-<!-- Track 07 -->
-<div class="track active" id="track1">
-    <div class="top-text">
-        track 07 - Onion Steak / Battle
+<div class="topbar">
+    <div>
+        track 15 – <span class="track-red">Orchestrated Impact</span>
     </div>
-
-    <div class="audio-container">
-        <audio controls>
-            <source src="track1.mp3" type="audio/mpeg">
-        </audio>
-        <div>2:18</div>
-    </div>
-
-    <div class="arrow right" onclick="nextTrack()">›</div>
+    <div class="right">WAYPOINT original soundtrack</div>
 </div>
 
-<!-- Track 15 -->
-<div class="track" id="track2">
-    <div class="top-text">
-        track 15 - <span style="color:#FF0000;">Orchestrated Impact</span>
-    </div>
-
-    <div class="audio-container">
-        <audio controls>
-            <source src="track2.mp3" type="audio/mpeg">
-        </audio>
-        <div>3:05</div>
-    </div>
-
-    <div class="arrow left" onclick="prevTrack()">‹</div>
+<div class="center">
+    <img src="cover.png" alt="cover">
 </div>
+
+<div class="player">
+
+    <div class="progress-row">
+        <div class="time" id="current">0:00</div>
+
+        <div class="progress" id="progress">
+            <div class="progress-fill" id="fill"></div>
+            <div class="handle" id="handle"></div>
+        </div>
+
+        <div class="time" id="duration">0:00</div>
+    </div>
+
+    <div class="controls">
+        <!-- Play -->
+        <button id="play">
+            <svg viewBox="0 0 24 24">
+                <polygon points="6,4 20,12 6,20"/>
+            </svg>
+        </button>
+
+        <!-- Pause -->
+        <button id="pause" style="display:none;">
+            <svg viewBox="0 0 24 24">
+                <rect x="5" y="4" width="5" height="16"/>
+                <rect x="14" y="4" width="5" height="16"/>
+            </svg>
+        </button>
+
+        <!-- Loop -->
+        <button id="loop" class="loop-inactive">
+            <svg viewBox="0 0 24 24">
+                <path d="M7 7h9l-2-2m2 2l-2 2M17 17H8l2 2m-2-2l2-2"
+                stroke="white" stroke-width="2" fill="none"/>
+            </svg>
+        </button>
+    </div>
+
+</div>
+
+<audio id="audio" src="track2.mp3"></audio>
 
 <script>
-let current = 1;
+const audio = document.getElementById("audio");
+const play = document.getElementById("play");
+const pause = document.getElementById("pause");
+const loopBtn = document.getElementById("loop");
+const progress = document.getElementById("progress");
+const fill = document.getElementById("fill");
+const handle = document.getElementById("handle");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
 
-function showTrack(num) {
-    document.querySelectorAll('.track').forEach(track => {
-        track.classList.remove('active');
-    });
-    document.getElementById('track' + num).classList.add('active');
+let dragging = false;
+let loopEnabled = false;
+
+function formatTime(sec){
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60).toString().padStart(2,"0");
+    return `${m}:${s}`;
 }
 
-function nextTrack() {
-    if (current < 2) {
-        current++;
-        showTrack(current);
+audio.addEventListener("loadedmetadata",()=>{
+    duration.textContent = formatTime(audio.duration);
+});
+
+audio.addEventListener("timeupdate",()=>{
+    if(dragging) return;
+    const percent = (audio.currentTime/audio.duration)*100;
+    fill.style.width = percent + "%";
+    handle.style.left = percent + "%";
+    current.textContent = formatTime(audio.currentTime);
+});
+
+audio.addEventListener("ended",()=>{
+    if(loopEnabled){
+        audio.currentTime = 0;
+        audio.play();
+    } else {
+        play.style.display="inline";
+        pause.style.display="none";
     }
+});
+
+play.onclick = ()=>{
+    audio.play();
+    play.style.display="none";
+    pause.style.display="inline";
+};
+
+pause.onclick = ()=>{
+    audio.pause();
+    pause.style.display="none";
+    play.style.display="inline";
+};
+
+loopBtn.onclick = ()=>{
+    loopEnabled = !loopEnabled;
+    loopBtn.className = loopEnabled ? "loop-active" : "loop-inactive";
+};
+
+function setProgress(e){
+    const rect = progress.getBoundingClientRect();
+    const percent = (e.clientX - rect.left)/rect.width;
+    audio.currentTime = percent * audio.duration;
 }
 
-function prevTrack() {
-    if (current > 1) {
-        current--;
-        showTrack(current);
+progress.addEventListener("mousedown",(e)=>{
+    dragging = true;
+    audio.pause();
+    setProgress(e);
+});
+
+document.addEventListener("mousemove",(e)=>{
+    if(dragging){
+        setProgress(e);
     }
-}
+});
+
+document.addEventListener("mouseup",()=>{
+    if(dragging){
+        dragging = false;
+        audio.play();
+    }
+});
 </script>
 
 </body>
